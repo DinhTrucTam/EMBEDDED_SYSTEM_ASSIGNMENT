@@ -18,6 +18,10 @@
 #define Rx_ESP 11
 #define Tx_ESP 12
 
+// DELAY PERIOD
+#define MESSAGE_SENT_DELAY 7000
+#define SYSTEM_DELAY 500
+
 // Request frame for the wind sensor
 const byte sensorRequest[] = {0x07, 0x03, 0x00, 0x00, 0x00, 0x04, 0x44, 0x6F};
 byte sensorResponse[RESPONSE_SIZE];
@@ -25,6 +29,8 @@ float windSpeed=0;
 float windAngle=0;
 int windDirectionValue = 0;
 char windDirection[5];
+uint16_t counter = 0;
+
 
 // Software serial for RS485 communication
 SoftwareSerial mod(RX, TX);
@@ -51,6 +57,7 @@ void setup()
  
 void loop()
 {
+  resetDirection(); // Reset wind direction
   mod.listen();
   readData();
   parseData();
@@ -82,11 +89,18 @@ void loop()
 
   // Send message to ESP8266 NodeMCU
   String message = mySpeed + myAngle + windDirection;
-  delay(5000);
-  mySerial.println(message);
-  
-  resetDirection(); // Reset wind direction
-  delay(1000); // Wait for 1 second
+
+  // counter for message sent
+  if(counter < (MESSAGE_SENT_DELAY/SYSTEM_DELAY))
+  {
+    counter++;
+    if (counter == MESSAGE_SENT_DELAY/SYSTEM_DELAY)
+    {
+      counter = 0;
+      mySerial.println(message);
+    }
+  }
+  delay(SYSTEM_DELAY); // Data is update every 0.5 second
 }
 
 void readData(){

@@ -74,14 +74,17 @@ void loop() {
       mySpeed = RxBuffer.substring(0, 5);
       Serial.println(mySpeed);
       speed->save(mySpeed);
+      delay(100);
 
       myAngle = RxBuffer.substring(5, 11);
       Serial.println(myAngle);
       angle->save(myAngle);
+      delay(100);
 
       myDirection = RxBuffer.substring(11);
       Serial.println(myDirection);
       direction->save(myDirection);
+      delay(100);
 
       displayOLED();
     }
@@ -103,16 +106,16 @@ void displayOLED()
   display.setCursor(84, 20);
   display.print("m/s");
 
-  display.setCursor(10, 30);
+  display.setCursor(10, 35);
   display.print("Direction: "); // Display text
-  display.setCursor(75, 30);
+  display.setCursor(75, 35);
   display.print(myDirection);
 
-  display.setCursor(10, 40);
+  display.setCursor(10, 50);
   display.print("Angle: ");     // Display text
-  display.setCursor(50, 40);
+  display.setCursor(50, 50);
   display.print(myAngle);
-  display.setCursor(87, 40);
+  display.setCursor(87, 50);
   display.print((char)247);
 
   display.display();
